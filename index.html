@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<style rel="stylesheet" link="fpcss.css"></style>
+	<link rel="stylesheet" href="fpcss.css">
 	<script src="https://d3js.org/d3.v7.min.js"></script>
 	<script src="scatterCat.js"></script>
 	<script src="linepltCompare.js"></script>
 	<script src="dataviewer.js"></script>
 	<script src="./fpjs.js" defer ></script>
-	<title></title>
+	<title>MH Prevalence In Popular Games</title>
 </head>
 <body>
-	<h1>Information Visualization Final Project</h1>
-	<p id="projDescription">Mental Health Prevalence in Popular Games</p>
+	<div id ="docHead">
+		<h1 id="titlecard">Information Visualization Final Project</h1>
+		<h2 id="projDescription">Mental Health Prevalence in Popular Games</h2>
+		<p id="instruct">Click on a point to view its components in the detail table.
+			<a id="srcDat" href="https://dataverse.harvard.edu/file.xhtml?fileId=7101717&version=1.1&toolType=PREVIEW" target="_blank" >View Data Source</a>
+		</p>
+	</div>
 	<div class="chart-container">
         <div id="scatterChart"></div>
     </div>
-	<div class="chart-container">
-        <div id="zoomableHierarchy"></div>
-    </div>
+	
 	<div class="chart-container">
         <div id="linepltCompare"></div>
     </div>
-	<div id="detailTable" style="position:absolute; background:white; border:1px solid black; padding: 10px; z-index:100; display:block;">
+	<div id="detailTable" >
         <table id="chartDetail">
-			<thead>
+			<thead id="chartHead" >
 				<th>Game</th>
 				<th>Release Year</th>
 				<th>Main Genre</th>
 			</thead>
 			<tbody id="tableBody">
-				<!--Hidden - move style to stylesheet for readability-->
+				<!--Hidden -->
 			</tbody>
 		</table>
     </div>
