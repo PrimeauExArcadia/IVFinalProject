@@ -3,8 +3,8 @@ class LinePlotCompare {
     constructor(container,data,options={},table) {
         this.container = container;
         this.data = data;
-        this.margin = {top:20,right:20,bottom:40,left:40};
-        this.width = 700 - this.margin.left - this.margin.right;
+        this.margin = {top:20,right:0,bottom:40,left:400};
+        this.width = 1000 - this.margin.left - this.margin.right;
         this.height = 700 - this.margin.top - this.margin.bottom;
         this.table = table
         //this.p1 = options.disorderCol;
@@ -21,6 +21,7 @@ class LinePlotCompare {
     }
     render(){
         //Process 
+        //Deepseek helped generate this part
         const aggregate = d3.rollup(
             this.data,
             v => ({
@@ -37,6 +38,8 @@ class LinePlotCompare {
             members: values.members
             })
         )
+        //End of generated part
+        
         this.data.sort((a,b) => {
             const getStartYear = interval => parseInt(interval.split("-")[0]);
             return getStartYear(a.YearInterval) - getStartYear(b.YearInterval);
@@ -60,17 +63,24 @@ class LinePlotCompare {
         this.svg.append("g")
             .attr("class","y axis")
             .call(d3.axisLeft(this.y));
+        
         this.svg.append("text")
-            .attr("transform","rotate(-90)")
-            .attr("y",0-this.margin.left)
-            .attr("x",0-(this.height/2))
-            .text("Prevalence Over Time Indicated by Research")
-            .style("font-size","16px");
+            //.attr("transform","rotate(-90)")
+            //.attr("y",this.height/2)
+            //.attr("x",-this.margin.left+10)
+            .attr("text-anchor", "middle")
+            .attr("transform", `translate(${-this.margin.left + 350}, ${this.height / 2}) rotate(-90)`)
+            .text("Aggregated Games")
         this.svg.append("text")
             .attr("x",this.width /2)
             .attr("y",this.height + this.margin.bottom)
             .style("text-anchor","middle")
             .text("Year Interval");
+        this.svg.append("text")
+            .attr("x",this.width/2)
+            .attr("y",this.margin.top-30)
+            .style("text-anchor","middle")
+            .text("Comparison of Documental and Expert Analysis of Mental Health");
     
     //map lines
         const lineP1 = d3.line()
