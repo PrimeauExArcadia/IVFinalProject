@@ -25,6 +25,7 @@ class ScatterCategorical {
         this.data.forEach(game => {
             this.disorderCol.forEach(col => {
                 if (game[col] === 1){
+                    //Deepseek helped generate this part
                     const key = `${game.YearInterval}_${col}`;
                     if (!aggregatedData[key]){
                         aggregatedData[key] = {
@@ -36,14 +37,11 @@ class ScatterCategorical {
                     }
                     aggregatedData[key].count += 1;
                     aggregatedData[key].games.push(game);
-                    
                 }
-                
             });
         });
-        const scatterData = Object.values(aggregatedData)
-        
-        this.data = scatterData
+        this.data = Object.values(aggregatedData)
+        //end of generated
         const maxCount = d3.min(this.data,d=>d.count)
         console.log(maxCount);
         this.x = d3.scaleBand()
@@ -95,9 +93,9 @@ class ScatterCategorical {
             .call(d3.axisLeft(this.y))
         
         this.svg.append("text")
-            .attr("y",0-this.margin.left)
-            .attr("x",0-(this.height/2))
-            .text("Mental Health Themes Prevalence by Disorder")
+            .attr("text-anchor", "middle")
+            .attr("transform", `translate(${-this.margin.left + 100}, ${this.height / 2}) rotate(-90)`)
+            .text("Game Aggregates by Disorder")
             .style("font-size","16px")
         
         this.svg.append("text")
