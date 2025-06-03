@@ -1,13 +1,14 @@
 //scatterCat Chart
 class ScatterCategorical {
-    constructor(container,data,options={}) {
+    constructor(container,data,options={},table) {
         this.container = container;
         this.data = data;
-        this.margin = {top:20,right:20,bottom:30,left:40};
-        this.width = 700 - this.margin.left - this.margin.right;
+        this.margin = {top:20,right:0,bottom:40,left:400};
+        this.width = 900 - this.margin.left - this.margin.right;
         this.height = 700 - this.margin.top - this.margin.bottom;
+        this.table = table;
         this.disorderCol = options.disorderCol;
-        this.binCols = options.binCols;
+        
         this.init();
     }
     init(){
@@ -18,20 +19,33 @@ class ScatterCategorical {
             .append('g')
             .attr('transform',`translate(${this.margin.left},${this.margin.top})`);
     }
-    render(){
-        const scatterData = [];
+    render(){ //create matrix
+        
+        const aggregatedData = {};
         this.data.forEach(game => {
             this.disorderCol.forEach(col => {
                 if (game[col] === 1){
-                    scatterData.push({
-                        YearInterval:game.YearInterval,
-                        attribute: col,
-                        game: game
-                    });
+                    const key = `${game.YearInterval}_${col}`;
+                    if (!aggregatedData[key]){
+                        aggregatedData[key] = {
+                            YearInterval:game.YearInterval,
+                            attribute: col,
+                            count: 0,
+                            games: [] //store all games this time
+                        };
+                    }
+                    aggregatedData[key].count += 1;
+                    aggregatedData[key].games.push(game);
+                    
                 }
+                
             });
         });
+        const scatterData = Object.values(aggregatedData)
+        
         this.data = scatterData
+        const maxCount = d3.min(this.data,d=>d.count)
+        console.log(maxCount);
         this.x = d3.scaleBand()
             .domain(this.data.map(d => d.YearInterval)
             .filter((value,index,self) => self.indexOf(value) === index).sort())
@@ -43,26 +57,17 @@ class ScatterCategorical {
             .padding(0.1);
 
         this.radiusScale = d3.scaleSqrt()
-            .domain([0,d3.max(this.data, d => {
-                return this.data.filter(
-                    p => p.YearInterval === d.YearInterval && p.attribute === d.attribute
-            ).length; //get number of games with attribute
-            })
-        ])
-            .range([0,15]);
+            .domain([0,d3.max(this.data, d => d.count)])
+            .range([0,35]);
         
         this.svg.selectAll(".dot")
             .data(this.data)
             .enter()
             .append("circle")
-            .attr("class","dot")
+            .attr("class","dot interactivePoint")
             .attr("cx",d=> this.x(d.YearInterval) + this.x.bandwidth() / 2)
             .attr("cy",d=> this.y(d.attribute) + this.y.bandwidth() / 2)
-            .attr("r",d => this.radiusScale(
-                this.data.filter(
-                    p => p.YearInterval === d.YearInterval && p.attribute === d.attribute
-                ).length
-            ))
+            .attr("r",d => this.radiusScale(d.count))
             .style("fill","steelblue")
             .style("stroke-width","1px")
             .style("stroke","#127f90")
@@ -76,9 +81,12 @@ class ScatterCategorical {
                 d3.select(this)
                     .style("stroke-width","1px")
                     .style("stroke","#127f90");
-            }
-        )
+            })
+            .on("click",(event,d) => {
+                this.table.update(d.games)
+            });
         
+        //axis definition
         this.svg.append("g")
             .attr("transform",`translate(0,${this.height})`)
             .call(d3.axisBottom(this.x))
@@ -87,14 +95,14 @@ class ScatterCategorical {
             .call(d3.axisLeft(this.y))
         
         this.svg.append("text")
-            .attr("transform","rotate(-90)")
             .attr("y",0-this.margin.left)
             .attr("x",0-(this.height/2))
             .text("Mental Health Themes Prevalence by Disorder")
             .style("font-size","16px")
         
         this.svg.append("text")
-            .attr("transform",`translate(${this.width / 2},${this.height + this.margin.top - 20})`)
+            .attr("x",this.width / 2)
+            .attr("y",this.height + this.margin.bottom)
             .style("text-anchor","middle")
             .text("Year Interval");
     }
