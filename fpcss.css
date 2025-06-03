@@ -1,4 +1,22 @@
-//fpcss 
-html {
-	
+/*fpcss*/ 
+
+#docHead {
+    border: 1px solid burlywood;
+}
+#titlecard,#projDescription,#instruct{
+    text-align:center;
+    padding: 2px;
+}
+#srcDat {
+    background-color: lightskyblue;
+    padding: 6px;
+    text-align:center;
+    border-radius: 5px;
+}
+#chartDetail {
+    border: 1px solid black;
+    margin: 2px 2px 2px 400px;
+}
+#chartDetail,.chartContainer{
+    padding: 4px;
 }
